@@ -11,6 +11,7 @@ license.workspace = true
 openvm-benchmarks-utils.workspace = true
 openvm-circuit.workspace = true
 openvm-stark-sdk.workspace = true
+openvm-stark-backend.workspace = true
 openvm-transpiler.workspace = true
 openvm-algebra-circuit.workspace = true
 openvm-algebra-transpiler.workspace = true
@@ -69,6 +70,10 @@ harness = false
 [[bin]]
 name = "execute-leaf-verifier"
 path = "src/execute-leaf-verifier.rs"
+
+[[bin]]
+name = "verify_execution_consistency"
+path = "src/verify_execution_consistency.rs"
 
 [package.metadata.cargo-shear]
 ignored = ["derive_more", "rand"]
