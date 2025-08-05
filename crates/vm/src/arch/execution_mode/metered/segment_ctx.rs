@@ -100,6 +100,88 @@ impl SegmentationCtx {
         self.segmentation_limits.max_interactions = max_interactions;
     }
 
+    #[allow(dead_code)]
+    pub fn print_segments(&self) {
+        // Calculate dynamic widths based on actual content
+        let max_air_name_width = self
+            .air_names
+            .iter()
+            .map(|name| name.len())
+            .max()
+            .unwrap_or(8)
+            .max(8); // minimum width for "Air Name"
+
+        let max_height = self
+            .segments
+            .iter()
+            .flat_map(|segment| segment.trace_heights.iter())
+            .max()
+            .unwrap_or(&0);
+        let height_width = format!("{}", max_height).len().max(6); // minimum width for "Height"
+
+        let max_cells = self
+            .segments
+            .iter()
+            .flat_map(|segment| {
+                segment
+                    .trace_heights
+                    .iter()
+                    .enumerate()
+                    .map(|(j, &height)| {
+                        let width = self.widths.get(j).unwrap_or(&0);
+                        height as usize * width
+                    })
+            })
+            .max()
+            .unwrap_or(0);
+        let cells_width = format!("{}", max_cells).len().max(5); // minimum width for "Cells"
+
+        for (i, segment) in self.segments.iter().enumerate() {
+            println!("\nSegment #{}", i);
+            println!("  Instret Start: {}", segment.instret_start);
+            println!("  Num Insns:     {}", segment.num_insns);
+
+            println!(
+                "  | {:<width$} | {:>height_width$} | {:>cells_width$} |",
+                "Air Name",
+                "Height",
+                "Cells",
+                width = max_air_name_width,
+                height_width = height_width,
+                cells_width = cells_width
+            );
+            println!(
+                "  |{:-<width$}|{:-<height_width$}|{:-<cells_width$}|",
+                "",
+                "",
+                "",
+                width = max_air_name_width + 2,
+                height_width = height_width + 2,
+                cells_width = cells_width + 2
+            );
+
+            for (j, height) in segment.trace_heights.iter().enumerate() {
+                let air_name = self
+                    .air_names
+                    .get(j)
+                    .map(|s| s.as_str())
+                    .unwrap_or("Unknown");
+                let width = self.widths.get(j).unwrap_or(&0);
+                let cells = *height as usize * width;
+                println!(
+                    "  | {:<width$} | {:>height_width$} | {:>cells_width$} |",
+                    air_name,
+                    height,
+                    cells,
+                    width = max_air_name_width,
+                    height_width = height_width,
+                    cells_width = cells_width
+                );
+            }
+        }
+        println!();
+    }
+
     /// Calculate the total cells used based on trace heights and widths
     #[inline(always)]
     fn calculate_total_cells(&self, trace_heights: &[u32]) -> usize {

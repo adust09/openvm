@@ -18,19 +18,19 @@ use openvm_transpiler::FromElf;
 use tracing_subscriber::{fmt, EnvFilter};
 
 static AVAILABLE_PROGRAMS: &[&str] = &[
-    "fibonacci_recursive",
-    "fibonacci_iterative",
-    "quicksort",
-    "bubblesort",
-    // "factorial_iterative_u256",
-    "revm_snailtracer",
-    "keccak256",
-    // "keccak256_iter",
-    "sha256",
-    // "sha256_iter",
-    "revm_transfer",
-    "pairing",
-    "kitchen-sink",
+    // "fibonacci_recursive",
+    // "fibonacci_iterative",
+    // "quicksort",
+    // "bubblesort",
+    "factorial_iterative_u256",
+    // "revm_snailtracer",
+    // "keccak256",
+    // // "keccak256_iter",
+    // "sha256",
+    // // "sha256_iter",
+    // "revm_transfer",
+    // "pairing",
+    // "kitchen-sink",
 ];
 
 fn load_program_executable(program: &str) -> Result<(VmExe<BabyBear>, SdkVmConfig)> {

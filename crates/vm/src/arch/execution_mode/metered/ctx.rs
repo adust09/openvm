@@ -150,21 +150,6 @@ impl<const PAGE_BITS: usize> MeteredCtx<PAGE_BITS> {
             self.reset_segment();
         }
     }
-
-    #[allow(dead_code)]
-    pub fn print_heights(&self) {
-        println!("{:>10} {:<30}", "Height", "Air Name");
-        println!("{}", "-".repeat(42));
-        for (i, height) in self.trace_heights.iter().enumerate() {
-            let air_name = self
-                .segmentation_ctx
-                .air_names
-                .get(i)
-                .map(|s| s.as_str())
-                .unwrap_or("Unknown");
-            println!("{:>10} {:<30}", height, air_name);
-        }
-    }
 }
 
 impl<const PAGE_BITS: usize> ExecutionCtxTrait for MeteredCtx<PAGE_BITS> {
@@ -212,6 +197,7 @@ impl<const PAGE_BITS: usize> ExecutionCtxTrait for MeteredCtx<PAGE_BITS> {
             .ctx
             .segmentation_ctx
             .segment(vm_state.instret, &vm_state.ctx.trace_heights);
+        vm_state.ctx.segmentation_ctx.print_segments();
     }
 }
 
