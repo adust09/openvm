@@ -2,7 +2,7 @@ use eyre::Result;
 use openvm_benchmarks_utils::{get_elf_path, get_programs_dir, read_elf_file};
 use openvm_circuit::{
     arch::{
-        execution_mode::metered::{MeteredCtx, Segment},
+        execution_mode::{MeteredCtx, Segment},
         instructions::exe::VmExe,
         PreflightExecutionOutput, VirtualMachine, *,
     },
@@ -18,19 +18,19 @@ use openvm_transpiler::FromElf;
 use tracing_subscriber::{fmt, EnvFilter};
 
 static AVAILABLE_PROGRAMS: &[&str] = &[
-    // "fibonacci_recursive",
-    // "fibonacci_iterative",
-    // "quicksort",
-    // "bubblesort",
+    "fibonacci_recursive",
+    "fibonacci_iterative",
+    "quicksort",
+    "bubblesort",
     "factorial_iterative_u256",
-    // "revm_snailtracer",
-    // "keccak256",
-    // // "keccak256_iter",
-    // "sha256",
-    // // "sha256_iter",
-    // "revm_transfer",
-    // "pairing",
-    // "kitchen-sink",
+    "revm_snailtracer",
+    "keccak256",
+    "keccak256_iter",
+    "sha256",
+    "sha256_iter",
+    "revm_transfer",
+    "pairing",
+    "kitchen-sink",
 ];
 
 fn load_program_executable(program: &str) -> Result<(VmExe<BabyBear>, SdkVmConfig)> {
@@ -232,25 +232,36 @@ fn run_preflight_execution(
     tracing::debug!("Running preflight execution");
     let vm = create_vm(config);
 
-    // Use the first segment's trace heights (assuming single segment for these programs)
-    let trace_heights = if !segments.is_empty() {
-        &segments[0].trace_heights
-    } else {
-        // Fallback to reasonable defaults if no segments
+    if segments.is_empty() {
         return Err(eyre::eyre!("No segments available for preflight execution"));
-    };
+    }
 
     // Create initial state using VM's method
     let initial_state = vm.create_initial_state(exe, input);
 
-    // Run preflight execution
-    let preflight_output: PreflightExecutionOutput<BabyBear, _> =
-        vm.execute_preflight(exe, initial_state, None, trace_heights)?;
+    // Run preflight execution for multiple segments
+    let mut interpreter = vm.preflight_interpreter(exe)?;
+    let mut state = initial_state;
+
+    for segment in segments {
+        let Segment {
+            instret_start,
+            num_insns,
+            trace_heights,
+        } = segment;
+
+        assert_eq!(state.instret, *instret_start);
+
+        let preflight_output: PreflightExecutionOutput<BabyBear, _> =
+            vm.execute_preflight(&mut interpreter, state, Some(*num_insns), trace_heights)?;
+
+        state = preflight_output.to_state;
+    }
 
     Ok(ExecutionResult {
-        instret: preflight_output.to_state.instret,
-        pc: preflight_output.to_state.pc,
-        memory: preflight_output.to_state.memory,
+        instret: state.instret,
+        pc: state.pc,
+        memory: state.memory,
     })
 }
 

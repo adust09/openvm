@@ -68,8 +68,8 @@ name = "execute"
 harness = false
 
 [[bin]]
-name = "execute-leaf-verifier"
-path = "src/execute-leaf-verifier.rs"
+name = "execute_leaf_verifier"
+path = "src/execute_leaf_verifier.rs"
 
 [[bin]]
 name = "verify_execution_consistency"
