@@ -51,6 +51,14 @@ pub use shift::*;
 mod extension;
 pub use extension::*;
 
+#[cfg(feature = "aot")]
+mod aot_compiler;
+#[cfg(feature = "aot")]
+pub use aot_compiler::*;
+
+#[cfg(all(feature = "aot", test))]
+mod aot_tests;
+
 cfg_if::cfg_if! {
     if #[cfg(feature = "cuda")] {
         use openvm_circuit::arch::DenseRecordArena;

@@ -15,6 +15,8 @@ mod state;
 /// Top level [VmExecutor] and [VirtualMachine] constructor and API.
 pub mod vm;
 
+#[cfg(feature = "aot")]
+pub mod aot;
 pub mod hasher;
 /// Interpreter for pure and metered VM execution
 pub mod interpreter;
@@ -24,6 +26,8 @@ pub mod interpreter_preflight;
 #[cfg(any(test, feature = "test-utils"))]
 pub mod testing;
 
+#[cfg(feature = "aot")]
+pub use aot::*;
 pub use config::*;
 pub use execution::*;
 pub use execution_mode::{ExecutionCtxTrait, MeteredExecutionCtxTrait};

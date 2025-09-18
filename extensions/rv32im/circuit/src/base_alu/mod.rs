@@ -5,8 +5,11 @@ use super::adapters::{
     RV32_REGISTER_NUM_LIMBS,
 };
 
+#[cfg(feature = "aot")]
+mod aot;
 mod core;
 mod execution;
+
 pub use core::*;
 
 #[cfg(feature = "cuda")]
