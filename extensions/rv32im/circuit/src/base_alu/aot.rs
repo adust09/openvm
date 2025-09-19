@@ -88,7 +88,7 @@ where
 fn generate_add_imm_assembly(rd: u8, rs1: u8, imm: i32) -> String {
     if rs1 == 0 {
         format!(
-            "    ; addi x{}, x{}, {} (rd=rs1+imm)\n    mov dword ptr [rbx + {}], {}  ; x{} = {}",
+            "    ; addi x{}, x{}, {} (rd=rs1+imm)\n    mov dword [rbx + {}], {}  ; x{} = {}",
             rd,
             rs1,
             imm,
@@ -99,7 +99,7 @@ fn generate_add_imm_assembly(rd: u8, rs1: u8, imm: i32) -> String {
         )
     } else {
         format!(
-            "    ; addi x{}, x{}, {} (rd=rs1+imm)\n    mov r15d, dword ptr [rbx + {}] ; Load x{}\n    add r15d, {}                  ; Add immediate\n    mov dword ptr [rbx + {}], r15d ; Store to x{}",
+            "    ; addi x{}, x{}, {} (rd=rs1+imm)\n    mov r15d, dword [rbx + {}] ; Load x{}\n    add r15d, {}                  ; Add immediate\n    mov dword [rbx + {}], r15d ; Store to x{}",
             rd, rs1, imm, rs1 * 4, rs1, imm, rd * 4, rd
         )
     }
@@ -108,7 +108,7 @@ fn generate_add_imm_assembly(rd: u8, rs1: u8, imm: i32) -> String {
 fn generate_add_reg_assembly(rd: u8, rs1: u8, rs2: u8) -> String {
     if rs1 == 0 && rs2 == 0 {
         format!(
-            "    ; add x{}, x{}, x{} (rd=rs1+rs2)\n    mov dword ptr [rbx + {}], 0  ; x{} = 0+0",
+            "    ; add x{}, x{}, x{} (rd=rs1+rs2)\n    mov dword [rbx + {}], 0  ; x{} = 0+0",
             rd,
             rs1,
             rs2,
@@ -117,17 +117,17 @@ fn generate_add_reg_assembly(rd: u8, rs1: u8, rs2: u8) -> String {
         )
     } else if rs1 == 0 {
         format!(
-            "    ; add x{}, x{}, x{} (rd=rs1+rs2)\n    mov r15d, dword ptr [rbx + {}] ; Load x{}\n    mov dword ptr [rbx + {}], r15d ; Store to x{} (0+rs2 = rs2)",
+            "    ; add x{}, x{}, x{} (rd=rs1+rs2)\n    mov r15d, dword [rbx + {}] ; Load x{}\n    mov dword [rbx + {}], r15d ; Store to x{} (0+rs2 = rs2)",
             rd, rs1, rs2, rs2 * 4, rs2, rd * 4, rd
         )
     } else if rs2 == 0 {
         format!(
-            "    ; add x{}, x{}, x{} (rd=rs1+rs2)\n    mov r15d, dword ptr [rbx + {}] ; Load x{}\n    mov dword ptr [rbx + {}], r15d ; Store to x{} (rs1+0 = rs1)",
+            "    ; add x{}, x{}, x{} (rd=rs1+rs2)\n    mov r15d, dword [rbx + {}] ; Load x{}\n    mov dword [rbx + {}], r15d ; Store to x{} (rs1+0 = rs1)",
             rd, rs1, rs2, rs1 * 4, rs1, rd * 4, rd
         )
     } else {
         format!(
-            "    ; add x{}, x{}, x{} (rd=rs1+rs2)\n    mov r15d, dword ptr [rbx + {}] ; Load x{}\n    add r15d, dword ptr [rbx + {}] ; Add x{}\n    mov dword ptr [rbx + {}], r15d ; Store to x{}",
+            "    ; add x{}, x{}, x{} (rd=rs1+rs2)\n    mov r15d, dword [rbx + {}] ; Load x{}\n    add r15d, dword [rbx + {}] ; Add x{}\n    mov dword [rbx + {}], r15d ; Store to x{}",
             rd, rs1, rs2, rs1 * 4, rs1, rs2 * 4, rs2, rd * 4, rd
         )
     }
@@ -138,7 +138,7 @@ fn generate_sub_imm_assembly(rd: u8, rs1: u8, imm: i32) -> String {
     if rs1 == 0 {
         let neg_imm = (-imm) as u32;
         format!(
-            "    ; subi x{}, x{}, {} (rd=rs1-imm)\n    mov dword ptr [rbx + {}], {}  ; x{} = 0-{}",
+            "    ; subi x{}, x{}, {} (rd=rs1-imm)\n    mov dword [rbx + {}], {}  ; x{} = 0-{}",
             rd,
             rs1,
             imm,
@@ -149,7 +149,7 @@ fn generate_sub_imm_assembly(rd: u8, rs1: u8, imm: i32) -> String {
         )
     } else {
         format!(
-            "    ; subi x{}, x{}, {} (rd=rs1-imm)\n    mov r15d, dword ptr [rbx + {}] ; Load x{}\n    sub r15d, {}                  ; Subtract immediate\n    mov dword ptr [rbx + {}], r15d ; Store to x{}",
+            "    ; subi x{}, x{}, {} (rd=rs1-imm)\n    mov r15d, dword [rbx + {}] ; Load x{}\n    sub r15d, {}                  ; Subtract immediate\n    mov dword [rbx + {}], r15d ; Store to x{}",
             rd, rs1, imm, rs1 * 4, rs1, imm, rd * 4, rd
         )
     }
@@ -158,7 +158,7 @@ fn generate_sub_imm_assembly(rd: u8, rs1: u8, imm: i32) -> String {
 fn generate_sub_reg_assembly(rd: u8, rs1: u8, rs2: u8) -> String {
     if rs1 == 0 && rs2 == 0 {
         format!(
-            "    ; sub x{}, x{}, x{} (rd=rs1-rs2)\n    mov dword ptr [rbx + {}], 0  ; x{} = 0-0",
+            "    ; sub x{}, x{}, x{} (rd=rs1-rs2)\n    mov dword [rbx + {}], 0  ; x{} = 0-0",
             rd,
             rs1,
             rs2,
@@ -167,17 +167,17 @@ fn generate_sub_reg_assembly(rd: u8, rs1: u8, rs2: u8) -> String {
         )
     } else if rs1 == 0 {
         format!(
-            "    ; sub x{}, x{}, x{} (rd=rs1-rs2)\n    mov r15d, dword ptr [rbx + {}] ; Load x{}\n    neg r15d                      ; Negate (0-rs2)\n    mov dword ptr [rbx + {}], r15d ; Store to x{}",
+            "    ; sub x{}, x{}, x{} (rd=rs1-rs2)\n    mov r15d, dword [rbx + {}] ; Load x{}\n    neg r15d                      ; Negate (0-rs2)\n    mov dword [rbx + {}], r15d ; Store to x{}",
             rd, rs1, rs2, rs2 * 4, rs2, rd * 4, rd
         )
     } else if rs2 == 0 {
         format!(
-            "    ; sub x{}, x{}, x{} (rd=rs1-rs2)\n    mov r15d, dword ptr [rbx + {}] ; Load x{}\n    mov dword ptr [rbx + {}], r15d ; Store to x{} (rs1-0 = rs1)",
+            "    ; sub x{}, x{}, x{} (rd=rs1-rs2)\n    mov r15d, dword [rbx + {}] ; Load x{}\n    mov dword [rbx + {}], r15d ; Store to x{} (rs1-0 = rs1)",
             rd, rs1, rs2, rs1 * 4, rs1, rd * 4, rd
         )
     } else {
         format!(
-            "    ; sub x{}, x{}, x{} (rd=rs1-rs2)\n    mov r15d, dword ptr [rbx + {}] ; Load x{}\n    sub r15d, dword ptr [rbx + {}] ; Subtract x{}\n    mov dword ptr [rbx + {}], r15d ; Store to x{}",
+            "    ; sub x{}, x{}, x{} (rd=rs1-rs2)\n    mov r15d, dword [rbx + {}] ; Load x{}\n    sub r15d, dword [rbx + {}] ; Subtract x{}\n    mov dword [rbx + {}], r15d ; Store to x{}",
             rd, rs1, rs2, rs1 * 4, rs1, rs2 * 4, rs2, rd * 4, rd
         )
     }
@@ -187,7 +187,7 @@ fn generate_sub_reg_assembly(rd: u8, rs1: u8, rs2: u8) -> String {
 fn generate_xor_imm_assembly(rd: u8, rs1: u8, imm: i32) -> String {
     if rs1 == 0 {
         format!(
-            "    ; xori x{}, x{}, {} (rd=rs1^imm)\n    mov dword ptr [rbx + {}], {}  ; x{} = 0^{}",
+            "    ; xori x{}, x{}, {} (rd=rs1^imm)\n    mov dword [rbx + {}], {}  ; x{} = 0^{}",
             rd,
             rs1,
             imm,
@@ -198,7 +198,7 @@ fn generate_xor_imm_assembly(rd: u8, rs1: u8, imm: i32) -> String {
         )
     } else {
         format!(
-            "    ; xori x{}, x{}, {} (rd=rs1^imm)\n    mov r15d, dword ptr [rbx + {}] ; Load x{}\n    xor r15d, {}                  ; XOR immediate\n    mov dword ptr [rbx + {}], r15d ; Store to x{}",
+            "    ; xori x{}, x{}, {} (rd=rs1^imm)\n    mov r15d, dword [rbx + {}] ; Load x{}\n    xor r15d, {}                  ; XOR immediate\n    mov dword [rbx + {}], r15d ; Store to x{}",
             rd, rs1, imm, rs1 * 4, rs1, imm, rd * 4, rd
         )
     }
@@ -207,7 +207,7 @@ fn generate_xor_imm_assembly(rd: u8, rs1: u8, imm: i32) -> String {
 fn generate_xor_reg_assembly(rd: u8, rs1: u8, rs2: u8) -> String {
     if rs1 == 0 && rs2 == 0 {
         format!(
-            "    ; xor x{}, x{}, x{} (rd=rs1^rs2)\n    mov dword ptr [rbx + {}], 0  ; x{} = 0^0",
+            "    ; xor x{}, x{}, x{} (rd=rs1^rs2)\n    mov dword [rbx + {}], 0  ; x{} = 0^0",
             rd,
             rs1,
             rs2,
@@ -216,17 +216,17 @@ fn generate_xor_reg_assembly(rd: u8, rs1: u8, rs2: u8) -> String {
         )
     } else if rs1 == 0 {
         format!(
-            "    ; xor x{}, x{}, x{} (rd=rs1^rs2)\n    mov r15d, dword ptr [rbx + {}] ; Load x{}\n    mov dword ptr [rbx + {}], r15d ; Store to x{} (0^rs2 = rs2)",
+            "    ; xor x{}, x{}, x{} (rd=rs1^rs2)\n    mov r15d, dword [rbx + {}] ; Load x{}\n    mov dword [rbx + {}], r15d ; Store to x{} (0^rs2 = rs2)",
             rd, rs1, rs2, rs2 * 4, rs2, rd * 4, rd
         )
     } else if rs2 == 0 {
         format!(
-            "    ; xor x{}, x{}, x{} (rd=rs1^rs2)\n    mov r15d, dword ptr [rbx + {}] ; Load x{}\n    mov dword ptr [rbx + {}], r15d ; Store to x{} (rs1^0 = rs1)",
+            "    ; xor x{}, x{}, x{} (rd=rs1^rs2)\n    mov r15d, dword [rbx + {}] ; Load x{}\n    mov dword [rbx + {}], r15d ; Store to x{} (rs1^0 = rs1)",
             rd, rs1, rs2, rs1 * 4, rs1, rd * 4, rd
         )
     } else {
         format!(
-            "    ; xor x{}, x{}, x{} (rd=rs1^rs2)\n    mov r15d, dword ptr [rbx + {}] ; Load x{}\n    xor r15d, dword ptr [rbx + {}] ; XOR x{}\n    mov dword ptr [rbx + {}], r15d ; Store to x{}",
+            "    ; xor x{}, x{}, x{} (rd=rs1^rs2)\n    mov r15d, dword [rbx + {}] ; Load x{}\n    xor r15d, dword [rbx + {}] ; XOR x{}\n    mov dword [rbx + {}], r15d ; Store to x{}",
             rd, rs1, rs2, rs1 * 4, rs1, rs2 * 4, rs2, rd * 4, rd
         )
     }
@@ -236,7 +236,7 @@ fn generate_xor_reg_assembly(rd: u8, rs1: u8, rs2: u8) -> String {
 fn generate_or_imm_assembly(rd: u8, rs1: u8, imm: i32) -> String {
     if rs1 == 0 {
         format!(
-            "    ; ori x{}, x{}, {} (rd=rs1|imm)\n    mov dword ptr [rbx + {}], {}  ; x{} = 0|{}",
+            "    ; ori x{}, x{}, {} (rd=rs1|imm)\n    mov dword [rbx + {}], {}  ; x{} = 0|{}",
             rd,
             rs1,
             imm,
@@ -247,7 +247,7 @@ fn generate_or_imm_assembly(rd: u8, rs1: u8, imm: i32) -> String {
         )
     } else {
         format!(
-            "    ; ori x{}, x{}, {} (rd=rs1|imm)\n    mov r15d, dword ptr [rbx + {}] ; Load x{}\n    or r15d, {}                   ; OR immediate\n    mov dword ptr [rbx + {}], r15d ; Store to x{}",
+            "    ; ori x{}, x{}, {} (rd=rs1|imm)\n    mov r15d, dword [rbx + {}] ; Load x{}\n    or r15d, {}                   ; OR immediate\n    mov dword [rbx + {}], r15d ; Store to x{}",
             rd, rs1, imm, rs1 * 4, rs1, imm, rd * 4, rd
         )
     }
@@ -256,7 +256,7 @@ fn generate_or_imm_assembly(rd: u8, rs1: u8, imm: i32) -> String {
 fn generate_or_reg_assembly(rd: u8, rs1: u8, rs2: u8) -> String {
     if rs1 == 0 && rs2 == 0 {
         format!(
-            "    ; or x{}, x{}, x{} (rd=rs1|rs2)\n    mov dword ptr [rbx + {}], 0  ; x{} = 0|0",
+            "    ; or x{}, x{}, x{} (rd=rs1|rs2)\n    mov dword [rbx + {}], 0  ; x{} = 0|0",
             rd,
             rs1,
             rs2,
@@ -265,17 +265,17 @@ fn generate_or_reg_assembly(rd: u8, rs1: u8, rs2: u8) -> String {
         )
     } else if rs1 == 0 {
         format!(
-            "    ; or x{}, x{}, x{} (rd=rs1|rs2)\n    mov r15d, dword ptr [rbx + {}] ; Load x{}\n    mov dword ptr [rbx + {}], r15d ; Store to x{} (0|rs2 = rs2)",
+            "    ; or x{}, x{}, x{} (rd=rs1|rs2)\n    mov r15d, dword [rbx + {}] ; Load x{}\n    mov dword [rbx + {}], r15d ; Store to x{} (0|rs2 = rs2)",
             rd, rs1, rs2, rs2 * 4, rs2, rd * 4, rd
         )
     } else if rs2 == 0 {
         format!(
-            "    ; or x{}, x{}, x{} (rd=rs1|rs2)\n    mov r15d, dword ptr [rbx + {}] ; Load x{}\n    mov dword ptr [rbx + {}], r15d ; Store to x{} (rs1|0 = rs1)",
+            "    ; or x{}, x{}, x{} (rd=rs1|rs2)\n    mov r15d, dword [rbx + {}] ; Load x{}\n    mov dword [rbx + {}], r15d ; Store to x{} (rs1|0 = rs1)",
             rd, rs1, rs2, rs1 * 4, rs1, rd * 4, rd
         )
     } else {
         format!(
-            "    ; or x{}, x{}, x{} (rd=rs1|rs2)\n    mov r15d, dword ptr [rbx + {}] ; Load x{}\n    or r15d, dword ptr [rbx + {}]  ; OR x{}\n    mov dword ptr [rbx + {}], r15d ; Store to x{}",
+            "    ; or x{}, x{}, x{} (rd=rs1|rs2)\n    mov r15d, dword [rbx + {}] ; Load x{}\n    or r15d, dword [rbx + {}]  ; OR x{}\n    mov dword [rbx + {}], r15d ; Store to x{}",
             rd, rs1, rs2, rs1 * 4, rs1, rs2 * 4, rs2, rd * 4, rd
         )
     }
@@ -285,12 +285,17 @@ fn generate_or_reg_assembly(rd: u8, rs1: u8, rs2: u8) -> String {
 fn generate_and_imm_assembly(rd: u8, rs1: u8, imm: i32) -> String {
     if rs1 == 0 {
         format!(
-            "    ; andi x{}, x{}, {} (rd=rs1&imm)\n    mov dword ptr [rbx + {}], 0  ; x{} = 0&{} = 0",
-            rd, rs1, imm, rd * 4, rd, imm
+            "    ; andi x{}, x{}, {} (rd=rs1&imm)\n    mov dword [rbx + {}], 0  ; x{} = 0&{} = 0",
+            rd,
+            rs1,
+            imm,
+            rd * 4,
+            rd,
+            imm
         )
     } else {
         format!(
-            "    ; andi x{}, x{}, {} (rd=rs1&imm)\n    mov r15d, dword ptr [rbx + {}] ; Load x{}\n    and r15d, {}                  ; AND immediate\n    mov dword ptr [rbx + {}], r15d ; Store to x{}",
+            "    ; andi x{}, x{}, {} (rd=rs1&imm)\n    mov r15d, dword [rbx + {}] ; Load x{}\n    and r15d, {}                  ; AND immediate\n    mov dword [rbx + {}], r15d ; Store to x{}",
             rd, rs1, imm, rs1 * 4, rs1, imm, rd * 4, rd
         )
     }
@@ -299,12 +304,16 @@ fn generate_and_imm_assembly(rd: u8, rs1: u8, imm: i32) -> String {
 fn generate_and_reg_assembly(rd: u8, rs1: u8, rs2: u8) -> String {
     if rs1 == 0 || rs2 == 0 {
         format!(
-            "    ; and x{}, x{}, x{} (rd=rs1&rs2)\n    mov dword ptr [rbx + {}], 0  ; x{} = X&0 = 0",
-            rd, rs1, rs2, rd * 4, rd
+            "    ; and x{}, x{}, x{} (rd=rs1&rs2)\n    mov dword [rbx + {}], 0  ; x{} = X&0 = 0",
+            rd,
+            rs1,
+            rs2,
+            rd * 4,
+            rd
         )
     } else {
         format!(
-            "    ; and x{}, x{}, x{} (rd=rs1&rs2)\n    mov r15d, dword ptr [rbx + {}] ; Load x{}\n    and r15d, dword ptr [rbx + {}] ; AND x{}\n    mov dword ptr [rbx + {}], r15d ; Store to x{}",
+            "    ; and x{}, x{}, x{} (rd=rs1&rs2)\n    mov r15d, dword [rbx + {}] ; Load x{}\n    and r15d, dword [rbx + {}] ; AND x{}\n    mov dword [rbx + {}], r15d ; Store to x{}",
             rd, rs1, rs2, rs1 * 4, rs1, rs2 * 4, rs2, rd * 4, rd
         )
     }

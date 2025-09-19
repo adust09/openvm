@@ -1252,7 +1252,7 @@ where
     }
 }
 
-pub(super) fn create_memory_image(
+pub fn create_memory_image(
     memory_config: &MemoryConfig,
     init_memory: &SparseMemoryImage,
 ) -> GuestMemory {
